@@ -2,6 +2,56 @@
 
 A simple task management CRUD application built with Laravel 13, deployed on AWS Elastic Beanstalk.
 
+## ⚠️ Aikido Zen Firewall Installation - Action Required
+
+This application has been configured with the Aikido Zen in-app firewall for security protection. To complete the installation:
+
+### 1. Move the middleware file
+
+The file `AikidoMiddleware.php` in the root directory needs to be moved to the correct location:
+
+```bash
+mkdir -p app/Http/Middleware
+mv AikidoMiddleware.php app/Http/Middleware/AikidoMiddleware.php
+```
+
+### 2. Set your Aikido token
+
+Update the `.env` file (or set via AWS Elastic Beanstalk environment variables):
+
+```bash
+AIKIDO_TOKEN=your-actual-aikido-token-here
+AIKIDO_BLOCK=false
+```
+
+Get your token from: https://help.aikido.dev/doc/creating-an-aikido-zen-firewall-token/doc6vRJNzC4u
+
+For Elastic Beanstalk, set the token via:
+
+```bash
+eb setenv AIKIDO_TOKEN=your-actual-aikido-token-here AIKIDO_BLOCK=false
+```
+
+### 3. Deploy
+
+The Aikido PHP extension will be automatically installed on the Elastic Beanstalk instance via the `.ebextensions/03_aikido_php_firewall.config` file.
+
+```bash
+eb deploy
+```
+
+### What Aikido Zen protects against
+
+- SQL injection
+- Command injection
+- Path traversal
+- SSRF (Server-Side Request Forgery)
+- User blocking and rate limiting (via the middleware)
+
+Logs are written to `/var/log/aikido-*/` on the EB instance for troubleshooting.
+
+---
+
 ## Requirements
 
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) configured with credentials
